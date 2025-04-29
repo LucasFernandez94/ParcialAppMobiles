@@ -29,11 +29,12 @@ fun IndexView(navController: NavController, datos: Datos, modifier: Modifier = M
             TopAppBar(
                 title = {
                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        Text("Mi Bialletera virtual")
+                        Text("Mi Bialletera virtual", color =MaterialTheme.colorScheme.onPrimary)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                    containerColor = MaterialTheme.colorScheme.primary
+
                 )
             )
         }

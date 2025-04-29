@@ -40,10 +40,10 @@ fun HomeView(navController: NavController, montoRetiro: String, datos: Datos, mo
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Recibo por retiro")
+                    Text("Recibo por retiro",  color =MaterialTheme.colorScheme.onPrimary)
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                    containerColor = MaterialTheme.colorScheme.primary
                 )
             )
         }
