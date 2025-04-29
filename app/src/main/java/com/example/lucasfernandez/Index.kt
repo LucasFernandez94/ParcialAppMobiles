@@ -1,100 +1,105 @@
 package com.example.lucasfernandez
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.lazy.items
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.lucasfernandez.ui.theme.LucasFernandezTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IndexView(navController : NavController,listaDeDatos: List<Datos> ,modifier : Modifier = Modifier) {
+fun IndexView(navController: NavController, datos: Datos, modifier: Modifier = Modifier) {
+
+    var retiroInput by remember { mutableStateOf(datos.motoRetiro) }
+    var valorActual by remember { mutableStateOf(datos.valorActual) }
+    if (valorActual <= 0){
+        valorActual = datos.valorInicial
+    }
+
     Scaffold(
         modifier = modifier,
-        floatingActionButton = {
-            FloatingActionButton(onClick = {
-                navController.navigate("Home")
-            }) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = "Agregar")
-            }
-        },
         topBar = {
             TopAppBar(
-                title = { Text("Nav Bar") },
+                title = {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        Text("Mi Bialletera virtual")
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
             )
         }
-
-    ) { paddind ->
-        LazyColumn(
-            modifier = Modifier.padding(paddind),
-            contentPadding = PaddingValues(15.dp)
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .padding(16.dp)
+                .fillMaxWidth().fillMaxHeight(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(listaDeDatos) {
-                ElevatedCard(
-                    modifier = Modifier.fillMaxWidth()
-                        .clickable(onClick = {
-                            navController.navigate("detalle")
-                        })
-                ) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(horizontal = 15.dp)
-                                .padding(top = 10.dp),
-                            text = it.titulo,
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                        Text(
-                            modifier = Modifier
-                                .padding(horizontal = 15.dp)
-                                .padding(bottom = 10.dp),
-                            text = it.texto,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+            Text(
+                text = "Dinero Total en cuenta:",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            Text(text = "$valorActual",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = modifier.padding(bottom = 16.dp))
+
+            Text("Ingrese monto a retirar", modifier = Modifier.align(Alignment.Start))
+
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                value = retiroInput,
+                onValueChange = { retiroInput = it },
+                shape = MaterialTheme.shapes.medium,
+                singleLine = true
+            )
+
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 18.dp).height(55.dp),
+                onClick = {
+                    val monto = retiroInput.toIntOrNull()
+                    if (monto != null && monto <= valorActual) {
+                        valorActual -= monto
+                        val montoRetiro = retiroInput
+                        retiroInput = ""
+
+                        datos.valorActual = valorActual
+                        datos.motoRetiro = montoRetiro
+
+                        navController.navigate("Home/$montoRetiro")
                     }
-                    Spacer(modifier.height(8.dp))
                 }
+            ) {
+                Text(text="Retirar", style = MaterialTheme.typography.titleLarge )
             }
         }
     }
 }
+
+
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
-    var listaDeDatos = listOf<Datos>()
+    val datos = Datos()
     LucasFernandezTheme {
         IndexView(
             rememberNavController(),
-            listaDeDatos
+            datos
         )
     }
 }

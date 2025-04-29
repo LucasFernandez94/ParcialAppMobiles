@@ -1,5 +1,7 @@
 package com.istea.notepad
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -31,13 +34,13 @@ import com.example.lucasfernandez.ui.theme.LucasFernandezTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeView( navController: NavController, modifier: Modifier = Modifier, onAgregarDatos: (Datos) -> Unit) {
+fun HomeView(navController: NavController, montoRetiro: String, datos: Datos, modifier: Modifier = Modifier) {
     Scaffold(
         modifier = modifier,
         topBar = {
             TopAppBar(
                 title = {
-                    Text("Soy una TopBar")
+                    Text("Recibo por retiro")
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -46,55 +49,56 @@ fun HomeView( navController: NavController, modifier: Modifier = Modifier, onAgr
         }
     ) { padding ->
         Column(
-            modifier = Modifier
-                .padding(padding)
-                .padding(16.dp)
-                .fillMaxSize()
+            modifier = Modifier.padding(padding)
         ) {
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 15.dp)
+                    .padding(top = 10.dp),
 
-            var titulo by remember { mutableStateOf("") }
-            var texto by remember { mutableStateOf("") }
-            Text("Ingresar titulo")
-            TextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = titulo,
-                onValueChange = { texto ->
-                    titulo = texto
-                }
+                text = "Retiro Exitoso",
+                style = MaterialTheme.typography.titleLarge
             )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                modifier = Modifier.weight(1f).fillMaxWidth(),
-                value = texto,
-                label = {
-                    Text("Ingresar Texto")
-                },
-                onValueChange = {
-                    texto = it
+            Card(
+                modifier = Modifier
+                    .padding(15.dp)
+                    .fillMaxWidth()
+                    .height(70.dp)
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Monto retirado $montoRetiro")
                 }
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                onClick = {
-                    navController.popBackStack()
-                    val nota = Datos(titulo = titulo, texto = texto)
-                    onAgregarDatos(nota)
-                },
-                modifier = Modifier.align(Alignment.End)) {
-                Text("Crear Nota")
             }
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 18.dp).height(55.dp),
+                onClick = {
+                navController.popBackStack()
+            }) {
+                Text("Volver")
+            }
+
         }
+
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun HomePreview() {
+    val datos = Datos().apply {
+        motoRetiro = ""
+        valorActual = 0
+    }
     LucasFernandezTheme {
         HomeView(
-            rememberNavController()
-        ) { _ -> }
+            rememberNavController(),
+            montoRetiro = "",
+            datos
+        )
     }
 }

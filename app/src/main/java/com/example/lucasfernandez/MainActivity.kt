@@ -26,15 +26,17 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
-            var listaDeDatos = remember{mutableStateListOf<Datos>()}
+            val datos = remember { Datos() }
             LucasFernandezTheme {
                 NavHost(
                     navController = navController,
                     startDestination = "Index"
                 ){
-                    composable("Index"){ IndexView(navController, listaDeDatos)}
-                    composable("Home"){ HomeView(navController){datos -> listaDeDatos.add(datos)} }
-                    composable("Detalle"){ DetalleView(navController)}
+                    composable("Index"){ IndexView(navController, Datos())}
+                    composable("Home/{montoRetiro}") { backStackEntry ->
+                        val montoRetiro = backStackEntry.arguments?.getString("montoRetiro") ?: "0"
+                        HomeView(navController, montoRetiro, datos)
+                    }
                 }
             }
         }
