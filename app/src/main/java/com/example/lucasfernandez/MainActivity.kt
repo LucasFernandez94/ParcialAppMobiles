@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     startDestination = "Index"
                 ){
-                    composable("Index"){ IndexView(navController, Datos())}
+                    composable("Index"){ IndexView(navController, datos)}
                     composable("Home/{montoRetiro}") { backStackEntry ->
                         val montoRetiro = backStackEntry.arguments?.getString("montoRetiro") ?: "0"
                         HomeView(navController, montoRetiro, datos)
